@@ -5663,11 +5663,11 @@
     </param>
     <param>
       <key>int_max</key>
-      <value>-20</value>
+      <value>-30</value>
     </param>
     <param>
       <key>int_min</key>
-      <value>-60</value>
+      <value>-50</value>
     </param>
     <param>
       <key>legend</key>
