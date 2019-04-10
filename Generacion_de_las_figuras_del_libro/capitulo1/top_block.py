@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Wed Feb 21 09:38:57 2018
+# Generated: Tue Apr  9 16:02:34 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -28,6 +28,7 @@ from optparse import OptionParser
 import math
 import sip
 import sys
+from gnuradio import qtgui
 
 
 class top_block(gr.top_block, Qt.QWidget):
@@ -36,6 +37,7 @@ class top_block(gr.top_block, Qt.QWidget):
         gr.top_block.__init__(self, "Top Block")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Top Block")
+        qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
         except:
@@ -55,51 +57,54 @@ class top_block(gr.top_block, Qt.QWidget):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
+
         ##################################################
         # Variables
         ##################################################
-        self.B = B = 8000
         self.Fc = Fc = 60000
-        self.BW = BW = B/2
-        self.No_dB = No_dB = -40
-        self.Fs = Fs = 2*BW
+        self.B = B = 8000
         self.Fmax = Fmax = Fc+B
-        self.No = No = math.pow(10,No_dB/10.)
-        self.N = N = 1024
-        self.Fs_ruido_blanco = Fs_ruido_blanco = 2*Fmax
-        self.Fs2 = Fs2 = int(Fs*1.5)
+        self.samp_rate = samp_rate = 4*Fmax
+        self.run_stop = run_stop = True
 
         ##################################################
         # Blocks
         ##################################################
-        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
-                interpolation=Fs2,
-                decimation=Fs,
-                taps=None,
-                fractional_bw=None,
-        )
+        _run_stop_check_box = Qt.QCheckBox('Inicial/Parar')
+        self._run_stop_choices = {True: True, False: False}
+        self._run_stop_choices_inv = dict((v,k) for k,v in self._run_stop_choices.iteritems())
+        self._run_stop_callback = lambda i: Qt.QMetaObject.invokeMethod(_run_stop_check_box, "setChecked", Qt.Q_ARG("bool", self._run_stop_choices_inv[i]))
+        self._run_stop_callback(self.run_stop)
+        _run_stop_check_box.stateChanged.connect(lambda i: self.set_run_stop(self._run_stop_choices[bool(i)]))
+        self.top_grid_layout.addWidget(_run_stop_check_box, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
-        	180, #size
-        	Fs_ruido_blanco, #samp_rate
-        	"Ruido Blanco Banda Angosta", #name
+        	1024, #size
+        	samp_rate, #samp_rate
+        	"Ruido Blanco de Banda Angosta", #name
         	1 #number of inputs
         )
         self.qtgui_time_sink_x_0_0.set_update_time(0.10)
         self.qtgui_time_sink_x_0_0.set_y_axis(-0.0003, 0.0003)
-        
-        self.qtgui_time_sink_x_0_0.set_y_label("Amplitud", "")
-        
+
+        self.qtgui_time_sink_x_0_0.set_y_label('Amplitud', "")
+
         self.qtgui_time_sink_x_0_0.enable_tags(-1, True)
         self.qtgui_time_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0.enable_autoscale(True)
         self.qtgui_time_sink_x_0_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0_0.enable_control_panel(False)
-        
+        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
+
         if not True:
           self.qtgui_time_sink_x_0_0.disable_legend()
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
+
+        labels = ['.', '', '', '', '',
+                  '', '', '', '', '']
         widths = [2, 2, 1, 1, 1,
                   1, 1, 1, 1, 1]
         colors = ["blue", "red", "green", "black", "cyan",
@@ -110,7 +115,7 @@ class top_block(gr.top_block, Qt.QWidget):
                    -1, -1, -1, -1, -1]
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
-        
+
         for i in xrange(1):
             if len(labels[i]) == 0:
                 self.qtgui_time_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
@@ -121,31 +126,37 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0_0.set_line_style(i, styles[i])
             self.qtgui_time_sink_x_0_0.set_line_marker(i, markers[i])
             self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win, 1,1,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win, 2, 1, 1, 1)
+        for r in range(2, 3):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
-        	512, #size
-        	Fs_ruido_blanco, #samp_rate
+        	1024, #size
+        	samp_rate, #samp_rate
         	"Ruido Blanco", #name
         	1 #number of inputs
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
         self.qtgui_time_sink_x_0.set_y_axis(-0.0003, 0.0003)
-        
-        self.qtgui_time_sink_x_0.set_y_label("Amplitud", "")
-        
+
+        self.qtgui_time_sink_x_0.set_y_label('Amplitud', "")
+
         self.qtgui_time_sink_x_0.enable_tags(-1, True)
         self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0.enable_autoscale(True)
         self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0.enable_control_panel(False)
-        
+        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+
         if not True:
           self.qtgui_time_sink_x_0.disable_legend()
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
+
+        labels = ['.', '', '', '', '',
+                  '', '', '', '', '']
         widths = [2, 2, 1, 1, 1,
                   1, 1, 1, 1, 1]
         colors = ["blue", "red", "green", "black", "cyan",
@@ -156,7 +167,7 @@ class top_block(gr.top_block, Qt.QWidget):
                    -1, -1, -1, -1, -1]
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
-        
+
         for i in xrange(1):
             if len(labels[i]) == 0:
                 self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
@@ -167,33 +178,39 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
             self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
             self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win, 0,1,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win, 1, 1, 1, 1)
+        for r in range(1, 2):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0_1 = qtgui.freq_sink_f(
-        	N, #size
+        	1024, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	Fc, #fc
-        	Fs_ruido_blanco, #bw
-        	"PSD. Ruido Blanco Banda Bngosta", #name
+        	samp_rate, #bw
+        	"PSD. Ruido Blanco de Banda Angosta", #name
         	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0_1.set_update_time(0.10)
         self.qtgui_freq_sink_x_0_1.set_y_axis(-200, -50)
+        self.qtgui_freq_sink_x_0_1.set_y_label('Relative Gain', 'dB')
         self.qtgui_freq_sink_x_0_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
         self.qtgui_freq_sink_x_0_1.enable_autoscale(False)
         self.qtgui_freq_sink_x_0_1.enable_grid(False)
         self.qtgui_freq_sink_x_0_1.set_fft_average(0.05)
+        self.qtgui_freq_sink_x_0_1.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0_1.enable_control_panel(False)
-        
+
         if not True:
           self.qtgui_freq_sink_x_0_1.disable_legend()
-        
+
         if "float" == "float" or "float" == "msg_float":
           self.qtgui_freq_sink_x_0_1.set_plot_pos_half(not True)
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
+
+        labels = ['.', '', '', '', '',
+                  '', '', '', '', '']
         widths = [2, 2, 1, 1, 1,
                   1, 1, 1, 1, 1]
         colors = ["blue", "red", "green", "black", "cyan",
@@ -208,74 +225,39 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0_1.set_line_width(i, widths[i])
             self.qtgui_freq_sink_x_0_1.set_line_color(i, colors[i])
             self.qtgui_freq_sink_x_0_1.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_freq_sink_x_0_1_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_1.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_1_win, 1,0,1,1)
-        self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
-        	N, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	Fs2, #bw
-        	"PSD. Ruido Blanco Banda Base", #name
-        	1 #number of inputs
-        )
-        self.qtgui_freq_sink_x_0_0.set_update_time(0.10)
-        self.qtgui_freq_sink_x_0_0.set_y_axis(-200, -50)
-        self.qtgui_freq_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0_0.enable_grid(False)
-        self.qtgui_freq_sink_x_0_0.set_fft_average(0.05)
-        self.qtgui_freq_sink_x_0_0.enable_control_panel(False)
-        
-        if not True:
-          self.qtgui_freq_sink_x_0_0.disable_legend()
-        
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_freq_sink_x_0_0.set_plot_pos_half(not True)
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
-        widths = [2, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
-        
-        self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 2,0,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_1_win, 2, 0, 1, 1)
+        for r in range(2, 3):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_f(
-        	N, #size
+        	1024, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	Fc, #fc
-        	Fs_ruido_blanco, #bw
+        	samp_rate, #bw
         	"PSD. Ruido blanco", #name
         	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0.set_update_time(0.10)
         self.qtgui_freq_sink_x_0.set_y_axis(-200, -50)
+        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
         self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
         self.qtgui_freq_sink_x_0.enable_autoscale(False)
         self.qtgui_freq_sink_x_0.enable_grid(False)
         self.qtgui_freq_sink_x_0.set_fft_average(0.05)
+        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0.enable_control_panel(False)
-        
+
         if not True:
           self.qtgui_freq_sink_x_0.disable_legend()
-        
+
         if "float" == "float" or "float" == "msg_float":
           self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
+
+        labels = ['.', '', '', '', '',
+                  '', '', '', '', '']
         widths = [2, 2, 1, 1, 1,
                   1, 1, 1, 1, 1]
         colors = ["blue", "red", "green", "black", "cyan",
@@ -290,150 +272,77 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
             self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0,0,1,1)
-        self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
-        	1024, #size
-        	"D.Polar. Ruido Blanco Banda Base", #name
-        	1 #number of inputs
-        )
-        self.qtgui_const_sink_x_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0.set_y_axis(-0.0003, 0.0003)
-        self.qtgui_const_sink_x_0.set_x_axis(-0.0003, 0.0003)
-        self.qtgui_const_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0.enable_grid(False)
-        
-        if not False:
-          self.qtgui_const_sink_x_0.disable_legend()
-        
-        labels = [".", "", "", "", "",
-                  "", "", "", "", ""]
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "red", "red", "red",
-                  "red", "red", "red", "red", "red"]
-        styles = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        markers = [0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_const_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
-        
-        self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win, 2,1,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 1, 0, 1, 1)
+        for r in range(1, 2):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.band_pass_filter_0 = filter.fir_filter_fff(1, firdes.band_pass(
-        	1, Fs_ruido_blanco, Fc-BW, Fc+BW, BW/16, firdes.WIN_HAMMING, 6.76))
-        self.analog_noise_source_x_0_0 = analog.noise_source_f(analog.GR_GAUSSIAN, No/2., 0)
-        self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, No, 0)
+        	1, samp_rate, Fc-B/2, Fc+B/2, (B/2)/16, firdes.WIN_HAMMING, 6.76))
+        self.analog_noise_source_x_0_0 = analog.noise_source_f(analog.GR_GAUSSIAN, 1, 0)
+
+
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_noise_source_x_0, 0), (self.rational_resampler_xxx_0, 0))    
-        self.connect((self.analog_noise_source_x_0_0, 0), (self.band_pass_filter_0, 0))    
-        self.connect((self.analog_noise_source_x_0_0, 0), (self.qtgui_freq_sink_x_0, 0))    
-        self.connect((self.analog_noise_source_x_0_0, 0), (self.qtgui_time_sink_x_0, 0))    
-        self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0_1, 0))    
-        self.connect((self.band_pass_filter_0, 0), (self.qtgui_time_sink_x_0_0, 0))    
-        self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_const_sink_x_0, 0))    
-        self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0_0, 0))    
+        self.connect((self.analog_noise_source_x_0_0, 0), (self.band_pass_filter_0, 0))
+        self.connect((self.analog_noise_source_x_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.analog_noise_source_x_0_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0_1, 0))
+        self.connect((self.band_pass_filter_0, 0), (self.qtgui_time_sink_x_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
+    def get_Fc(self):
+        return self.Fc
+
+    def set_Fc(self, Fc):
+        self.Fc = Fc
+        self.qtgui_freq_sink_x_0_1.set_frequency_range(self.Fc, self.samp_rate)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.Fc, self.samp_rate)
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.Fc-self.B/2, self.Fc+self.B/2, (self.B/2)/16, firdes.WIN_HAMMING, 6.76))
+        self.set_Fmax(self.Fc+self.B)
 
     def get_B(self):
         return self.B
 
     def set_B(self, B):
         self.B = B
-        self.set_BW(self.B/2)
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.Fc-self.B/2, self.Fc+self.B/2, (self.B/2)/16, firdes.WIN_HAMMING, 6.76))
         self.set_Fmax(self.Fc+self.B)
-
-    def get_Fc(self):
-        return self.Fc
-
-    def set_Fc(self, Fc):
-        self.Fc = Fc
-        self.set_Fmax(self.Fc+self.B)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.Fs_ruido_blanco, self.Fc-self.BW, self.Fc+self.BW, self.BW/16, firdes.WIN_HAMMING, 6.76))
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.Fc, self.Fs_ruido_blanco)
-        self.qtgui_freq_sink_x_0_1.set_frequency_range(self.Fc, self.Fs_ruido_blanco)
-
-    def get_BW(self):
-        return self.BW
-
-    def set_BW(self, BW):
-        self.BW = BW
-        self.set_Fs(2*self.BW)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.Fs_ruido_blanco, self.Fc-self.BW, self.Fc+self.BW, self.BW/16, firdes.WIN_HAMMING, 6.76))
-
-    def get_No_dB(self):
-        return self.No_dB
-
-    def set_No_dB(self, No_dB):
-        self.No_dB = No_dB
-        self.set_No(math.pow(10,self.No_dB/10.))
-
-    def get_Fs(self):
-        return self.Fs
-
-    def set_Fs(self, Fs):
-        self.Fs = Fs
-        self.set_Fs2(int(self.Fs*1.5))
 
     def get_Fmax(self):
         return self.Fmax
 
     def set_Fmax(self, Fmax):
         self.Fmax = Fmax
-        self.set_Fs_ruido_blanco(2*self.Fmax)
+        self.set_samp_rate(4*self.Fmax)
 
-    def get_No(self):
-        return self.No
+    def get_samp_rate(self):
+        return self.samp_rate
 
-    def set_No(self, No):
-        self.No = No
-        self.analog_noise_source_x_0.set_amplitude(self.No)
-        self.analog_noise_source_x_0_0.set_amplitude(self.No/2.)
+    def set_samp_rate(self, samp_rate):
+        self.samp_rate = samp_rate
+        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.qtgui_freq_sink_x_0_1.set_frequency_range(self.Fc, self.samp_rate)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.Fc, self.samp_rate)
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.Fc-self.B/2, self.Fc+self.B/2, (self.B/2)/16, firdes.WIN_HAMMING, 6.76))
 
-    def get_N(self):
-        return self.N
+    def get_run_stop(self):
+        return self.run_stop
 
-    def set_N(self, N):
-        self.N = N
-
-    def get_Fs_ruido_blanco(self):
-        return self.Fs_ruido_blanco
-
-    def set_Fs_ruido_blanco(self, Fs_ruido_blanco):
-        self.Fs_ruido_blanco = Fs_ruido_blanco
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.Fs_ruido_blanco, self.Fc-self.BW, self.Fc+self.BW, self.BW/16, firdes.WIN_HAMMING, 6.76))
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.Fc, self.Fs_ruido_blanco)
-        self.qtgui_freq_sink_x_0_1.set_frequency_range(self.Fc, self.Fs_ruido_blanco)
-        self.qtgui_time_sink_x_0.set_samp_rate(self.Fs_ruido_blanco)
-        self.qtgui_time_sink_x_0_0.set_samp_rate(self.Fs_ruido_blanco)
-
-    def get_Fs2(self):
-        return self.Fs2
-
-    def set_Fs2(self, Fs2):
-        self.Fs2 = Fs2
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.Fs2)
+    def set_run_stop(self, run_stop):
+        self.run_stop = run_stop
+        if self.run_stop: self.start()
+        else: self.stop(); self.wait()
+        self._run_stop_callback(self.run_stop)
 
 
 def main(top_block_cls=top_block, options=None):
