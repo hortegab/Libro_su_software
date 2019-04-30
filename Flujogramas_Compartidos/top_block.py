@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Wed Apr 24 05:14:01 2019
+# Generated: Thu Apr 25 14:34:30 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -21,7 +21,6 @@ import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
 from PyQt4 import Qt
-from b_Canal_AWGN import b_Canal_AWGN  # grc-generated hier_block
 from b_discriminador_frec_umd_cf import b_discriminador_frec_umd_cf  # grc-generated hier_block
 from gnuradio import analog
 from gnuradio import audio
@@ -75,10 +74,16 @@ class top_block(gr.top_block, Qt.QWidget):
         self.DeltaF = DeltaF = D*BWm
         self.BW = BW = 2*DeltaF+2*BWm
         self.Ap = Ap = 1.
-        self.samp_rate = samp_rate = int(BW*2.3)
+        self.samp_rate = samp_rate = 390625
         self.run_stop = run_stop = True
         self.delay = delay = 0
         self.Kf = Kf = DeltaF/Ap
+        self.Gain_Tx_precanal = Gain_Tx_precanal = 1.
+        self.Gain_Tx_USRP = Gain_Tx_USRP = 0.
+        self.Gain_Rx_post_canal = Gain_Rx_post_canal = 1.
+        self.Gain_Rx_USRP = Gain_Rx_USRP = 0.
+        self.Fc = Fc = 99000000
+        self.B = B = 2*BW
         self.Audio_Gain = Audio_Gain = 1.
 
         ##################################################
@@ -119,7 +124,7 @@ class top_block(gr.top_block, Qt.QWidget):
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	0, #fc
         	samp_rate, #bw
-        	'PSD. Salida del Canal', #name
+        	'PSD. Salida del Filtro receptor', #name
         	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0_0.set_update_time(0.10)
@@ -166,7 +171,7 @@ class top_block(gr.top_block, Qt.QWidget):
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	0, #fc
         	samp_rate, #bw
-        	"PSD. Entrada del canal", #name
+        	"PSD. Entrada del USRP", #name
         	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0.set_update_time(0.10)
@@ -210,7 +215,7 @@ class top_block(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
         	1024, #size
-        	'Salida del Canal', #name
+        	'Salida del del Filtro receptor', #name
         	1 #number of inputs
         )
         self.qtgui_const_sink_x_0_0.set_update_time(0.10)
@@ -255,7 +260,7 @@ class top_block(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
         	1024, #size
-        	'Entrada del canal', #name
+        	'Entrada del Entrada del USRP', #name
         	1 #number of inputs
         )
         self.qtgui_const_sink_x_0.set_update_time(0.10)
@@ -298,6 +303,10 @@ class top_block(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 1):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
+        	Gain_Rx_post_canal, samp_rate, BW, BW/16., firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
+        	Gain_Tx_precanal, samp_rate, BW, BW/16., firdes.WIN_HAMMING, 6.76))
         self._delay_range = Range(0, 100, 1, 0, 200)
         self._delay_win = RangeWidget(self._delay_range, self.set_delay, 'cuadrar retraso entre mensajes', "counter_slider", float)
         self.top_grid_layout.addWidget(self._delay_win, 0, 1, 1, 1)
@@ -310,12 +319,6 @@ class top_block(gr.top_block, Qt.QWidget):
         self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_vff((Kf, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((Audio_Gain, ))
         self.b_discriminador_frec_umd_cf_0 = b_discriminador_frec_umd_cf()
-        self.b_Canal_AWGN_0 = b_Canal_AWGN(
-            BW=BW,
-            Ch_NodB=-65,
-            Ch_Toffset=0,
-            samp_rate=samp_rate,
-        )
         self.audio_sink_0 = audio.sink(samp_rate_audio, '', True)
         self.analog_fm_preemph_0 = analog.fm_preemph(fs=samp_rate, tau=75e-6, fh=-1.0)
         self.analog_fm_deemph_0 = analog.fm_deemph(fs=samp_rate, tau=75e-6)
@@ -327,16 +330,17 @@ class top_block(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_fm_deemph_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.analog_fm_preemph_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
-        self.connect((self.b_Canal_AWGN_0, 0), (self.b_discriminador_frec_umd_cf_0, 0))
-        self.connect((self.b_Canal_AWGN_0, 0), (self.qtgui_const_sink_x_0_0, 0))
-        self.connect((self.b_Canal_AWGN_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.b_discriminador_frec_umd_cf_0, 0), (self.analog_fm_deemph_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_vco_c_0_0_0, 0))
-        self.connect((self.blocks_vco_c_0_0_0, 0), (self.b_Canal_AWGN_0, 0))
-        self.connect((self.blocks_vco_c_0_0_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.blocks_vco_c_0_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.blocks_vco_c_0_0_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.blocks_wavfile_source_0_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.low_pass_filter_0_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.b_discriminador_frec_umd_cf_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_const_sink_x_0_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_fm_preemph_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
 
@@ -380,8 +384,9 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_BW(self, BW):
         self.BW = BW
-        self.set_samp_rate(int(self.BW*2.3))
-        self.b_Canal_AWGN_0.set_BW(self.BW)
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(self.Gain_Rx_post_canal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(self.Gain_Tx_precanal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
+        self.set_B(2*self.BW)
 
     def get_Ap(self):
         return self.Ap
@@ -397,7 +402,8 @@ class top_block(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.b_Canal_AWGN_0.set_samp_rate(self.samp_rate)
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(self.Gain_Rx_post_canal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(self.Gain_Tx_precanal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
 
     def get_run_stop(self):
         return self.run_stop
@@ -420,6 +426,44 @@ class top_block(gr.top_block, Qt.QWidget):
     def set_Kf(self, Kf):
         self.Kf = Kf
         self.blocks_multiply_const_vxx_0_0_0.set_k((self.Kf, ))
+
+    def get_Gain_Tx_precanal(self):
+        return self.Gain_Tx_precanal
+
+    def set_Gain_Tx_precanal(self, Gain_Tx_precanal):
+        self.Gain_Tx_precanal = Gain_Tx_precanal
+        self.low_pass_filter_0.set_taps(firdes.low_pass(self.Gain_Tx_precanal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
+
+    def get_Gain_Tx_USRP(self):
+        return self.Gain_Tx_USRP
+
+    def set_Gain_Tx_USRP(self, Gain_Tx_USRP):
+        self.Gain_Tx_USRP = Gain_Tx_USRP
+
+    def get_Gain_Rx_post_canal(self):
+        return self.Gain_Rx_post_canal
+
+    def set_Gain_Rx_post_canal(self, Gain_Rx_post_canal):
+        self.Gain_Rx_post_canal = Gain_Rx_post_canal
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(self.Gain_Rx_post_canal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
+
+    def get_Gain_Rx_USRP(self):
+        return self.Gain_Rx_USRP
+
+    def set_Gain_Rx_USRP(self, Gain_Rx_USRP):
+        self.Gain_Rx_USRP = Gain_Rx_USRP
+
+    def get_Fc(self):
+        return self.Fc
+
+    def set_Fc(self, Fc):
+        self.Fc = Fc
+
+    def get_B(self):
+        return self.B
+
+    def set_B(self, B):
+        self.B = B
 
     def get_Audio_Gain(self):
         return self.Audio_Gain
