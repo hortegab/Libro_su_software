@@ -3,8 +3,10 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Thu Apr 25 14:34:30 2019
+# Generated: Fri May  3 16:16:38 2019
 ##################################################
+
+from distutils.version import StrictVersion
 
 if __name__ == '__main__':
     import ctypes
@@ -20,7 +22,8 @@ import os
 import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
-from PyQt4 import Qt
+from PyQt5 import Qt
+from PyQt5 import Qt, QtCore
 from b_discriminador_frec_umd_cf import b_discriminador_frec_umd_cf  # grc-generated hier_block
 from gnuradio import analog
 from gnuradio import audio
@@ -29,12 +32,14 @@ from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio import qtgui
+from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
 import math
 import sip
+import time
 from gnuradio import qtgui
 
 
@@ -62,8 +67,11 @@ class top_block(gr.top_block, Qt.QWidget):
         self.top_layout.addLayout(self.top_grid_layout)
 
         self.settings = Qt.QSettings("GNU Radio", "top_block")
-        self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
+        if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
+            self.restoreGeometry(self.settings.value("geometry").toByteArray())
+        else:
+            self.restoreGeometry(self.settings.value("geometry", type=QtCore.QByteArray))
 
         ##################################################
         # Variables
@@ -76,12 +84,13 @@ class top_block(gr.top_block, Qt.QWidget):
         self.Ap = Ap = 1.
         self.samp_rate = samp_rate = 390625
         self.run_stop = run_stop = True
-        self.delay = delay = 0
         self.Kf = Kf = DeltaF/Ap
-        self.Gain_Tx_precanal = Gain_Tx_precanal = 1.
-        self.Gain_Tx_USRP = Gain_Tx_USRP = 0.
-        self.Gain_Rx_post_canal = Gain_Rx_post_canal = 1.
-        self.Gain_Rx_USRP = Gain_Rx_USRP = 0.
+        self.Gain_Tx_precanal = Gain_Tx_precanal = 0.7
+        self.Gain_Tx_USRP_max = Gain_Tx_USRP_max = 60.
+        self.Gain_Tx_USRP = Gain_Tx_USRP = 0
+        self.Gain_Rx_post_canal = Gain_Rx_post_canal = 1
+        self.Gain_Rx_USRP_max = Gain_Rx_USRP_max = 38
+        self.Gain_Rx_USRP = Gain_Rx_USRP = 0
         self.Fc = Fc = 99000000
         self.B = B = 2*BW
         self.Audio_Gain = Audio_Gain = 1.
@@ -89,24 +98,62 @@ class top_block(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self._Gain_Tx_precanal_range = Range(0, 2., 2./100., 0.7, 200)
+        self._Gain_Tx_precanal_win = RangeWidget(self._Gain_Tx_precanal_range, self.set_Gain_Tx_precanal, 'Gain_Tx_precanal', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._Gain_Tx_precanal_win, 1, 2, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(2,3)]
+        self._Gain_Tx_USRP_range = Range(0, Gain_Tx_USRP_max, Gain_Tx_USRP_max/100., 0, 200)
+        self._Gain_Tx_USRP_win = RangeWidget(self._Gain_Tx_USRP_range, self.set_Gain_Tx_USRP, 'Ganancia del USRP Tx', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._Gain_Tx_USRP_win, 0, 3, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(3,4)]
+        self._Gain_Rx_post_canal_range = Range(0, 1000., 1000./100., 1, 200)
+        self._Gain_Rx_post_canal_win = RangeWidget(self._Gain_Rx_post_canal_range, self.set_Gain_Rx_post_canal, 'Gain_Rx_post_canal', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._Gain_Rx_post_canal_win, 1, 3, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(1,2)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(3,4)]
+        self._Gain_Rx_USRP_range = Range(0, Gain_Rx_USRP_max, Gain_Rx_USRP_max/100., 0, 200)
+        self._Gain_Rx_USRP_win = RangeWidget(self._Gain_Rx_USRP_range, self.set_Gain_Rx_USRP, 'Ganancia del USRP Rx', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._Gain_Rx_USRP_win, 0, 2, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(2,3)]
         self._Audio_Gain_range = Range(0, 4, 4./100., 1., 200)
         self._Audio_Gain_win = RangeWidget(self._Audio_Gain_range, self.set_Audio_Gain, 'Volumen', "dial", float)
-        self.top_grid_layout.addWidget(self._Audio_Gain_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        self.top_grid_layout.addWidget(self._Audio_Gain_win, 0, 1, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(1,2)]
+        self.uhd_usrp_source_0 = uhd.usrp_source(
+        	",".join(("", "")),
+        	uhd.stream_args(
+        		cpu_format="fc32",
+        		channels=range(1),
+        	),
+        )
+        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_0.set_center_freq(Fc, 0)
+        self.uhd_usrp_source_0.set_gain(Gain_Rx_USRP, 0)
+        self.uhd_usrp_source_0.set_antenna('RX2', 0)
+        self.uhd_usrp_sink_0 = uhd.usrp_sink(
+        	",".join(("", "")),
+        	uhd.stream_args(
+        		cpu_format="fc32",
+        		channels=range(1),
+        	),
+        )
+        self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_sink_0.set_center_freq(Fc, 0)
+        self.uhd_usrp_sink_0.set_gain(Gain_Tx_USRP, 0)
+        self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         _run_stop_check_box = Qt.QCheckBox('Inicial/Parar')
         self._run_stop_choices = {True: True, False: False}
         self._run_stop_choices_inv = dict((v,k) for k,v in self._run_stop_choices.iteritems())
         self._run_stop_callback = lambda i: Qt.QMetaObject.invokeMethod(_run_stop_check_box, "setChecked", Qt.Q_ARG("bool", self._run_stop_choices_inv[i]))
         self._run_stop_callback(self.run_stop)
         _run_stop_check_box.stateChanged.connect(lambda i: self.set_run_stop(self._run_stop_choices[bool(i)]))
-        self.top_grid_layout.addWidget(_run_stop_check_box, 0, 2, 1, 1)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(2, 3):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        self.top_grid_layout.addWidget(_run_stop_check_box, 0, 0, 1, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(0,1)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,1)]
         self.rational_resampler_xxx_0_0 = filter.rational_resampler_fff(
                 interpolation=samp_rate_audio,
                 decimation=samp_rate,
@@ -161,11 +208,9 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 4, 1, 1, 1)
-        for r in range(4, 5):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 4, 2, 1, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(4,5)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(2,4)]
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	1024, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -208,11 +253,9 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 4, 0, 1, 1)
-        for r in range(4, 5):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 4, 0, 1, 2)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(4,5)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,2)]
         self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
         	1024, #size
         	'Salida del del Filtro receptor', #name
@@ -254,10 +297,8 @@ class top_block(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_0_win, 5, 1, 1, 1)
-        for r in range(5, 6):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(5,6)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(1,2)]
         self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
         	1024, #size
         	'Entrada del Entrada del USRP', #name
@@ -299,22 +340,13 @@ class top_block(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win, 5, 0, 1, 1)
-        for r in range(5, 6):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        [self.top_grid_layout.setRowStretch(r,1) for r in range(5,6)]
+        [self.top_grid_layout.setColumnStretch(c,1) for c in range(0,1)]
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	Gain_Rx_post_canal, samp_rate, BW, BW/16., firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	Gain_Tx_precanal, samp_rate, BW, BW/16., firdes.WIN_HAMMING, 6.76))
-        self._delay_range = Range(0, 100, 1, 0, 200)
-        self._delay_win = RangeWidget(self._delay_range, self.set_delay, 'cuadrar retraso entre mensajes', "counter_slider", float)
-        self.top_grid_layout.addWidget(self._delay_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.blocks_wavfile_source_0_0 = blocks.wavfile_source('/media/uis-e3t/DATADRIVE1/MisGitHub/Libro_su_software/Flujogramas_Compartidos/bush-clinton_debate_waffle.wav', True)
+        self.blocks_wavfile_source_0_0 = blocks.wavfile_source('/home/hob/MisGITS/Libro_su_software/Flujogramas_Compartidos/bush-clinton_debate_waffle.wav', True)
         self.blocks_vco_c_0_0_0 = blocks.vco_c(samp_rate, 2*math.pi, 1)
         self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_vff((Kf, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((Audio_Gain, ))
@@ -322,8 +354,6 @@ class top_block(gr.top_block, Qt.QWidget):
         self.audio_sink_0 = audio.sink(samp_rate_audio, '', True)
         self.analog_fm_preemph_0 = analog.fm_preemph(fs=samp_rate, tau=75e-6, fh=-1.0)
         self.analog_fm_deemph_0 = analog.fm_deemph(fs=samp_rate, tau=75e-6)
-
-
 
         ##################################################
         # Connections
@@ -335,14 +365,15 @@ class top_block(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.blocks_vco_c_0_0_0, 0))
         self.connect((self.blocks_vco_c_0_0_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.blocks_wavfile_source_0_0, 0), (self.rational_resampler_xxx_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.low_pass_filter_0_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.b_discriminador_frec_umd_cf_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_const_sink_x_0_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_fm_preemph_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.low_pass_filter_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
@@ -400,6 +431,8 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(self.Gain_Rx_post_canal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
@@ -413,12 +446,6 @@ class top_block(gr.top_block, Qt.QWidget):
         if self.run_stop: self.start()
         else: self.stop(); self.wait()
         self._run_stop_callback(self.run_stop)
-
-    def get_delay(self):
-        return self.delay
-
-    def set_delay(self, delay):
-        self.delay = delay
 
     def get_Kf(self):
         return self.Kf
@@ -434,11 +461,19 @@ class top_block(gr.top_block, Qt.QWidget):
         self.Gain_Tx_precanal = Gain_Tx_precanal
         self.low_pass_filter_0.set_taps(firdes.low_pass(self.Gain_Tx_precanal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
 
+    def get_Gain_Tx_USRP_max(self):
+        return self.Gain_Tx_USRP_max
+
+    def set_Gain_Tx_USRP_max(self, Gain_Tx_USRP_max):
+        self.Gain_Tx_USRP_max = Gain_Tx_USRP_max
+
     def get_Gain_Tx_USRP(self):
         return self.Gain_Tx_USRP
 
     def set_Gain_Tx_USRP(self, Gain_Tx_USRP):
         self.Gain_Tx_USRP = Gain_Tx_USRP
+        self.uhd_usrp_sink_0.set_gain(self.Gain_Tx_USRP, 0)
+
 
     def get_Gain_Rx_post_canal(self):
         return self.Gain_Rx_post_canal
@@ -447,17 +482,27 @@ class top_block(gr.top_block, Qt.QWidget):
         self.Gain_Rx_post_canal = Gain_Rx_post_canal
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(self.Gain_Rx_post_canal, self.samp_rate, self.BW, self.BW/16., firdes.WIN_HAMMING, 6.76))
 
+    def get_Gain_Rx_USRP_max(self):
+        return self.Gain_Rx_USRP_max
+
+    def set_Gain_Rx_USRP_max(self, Gain_Rx_USRP_max):
+        self.Gain_Rx_USRP_max = Gain_Rx_USRP_max
+
     def get_Gain_Rx_USRP(self):
         return self.Gain_Rx_USRP
 
     def set_Gain_Rx_USRP(self, Gain_Rx_USRP):
         self.Gain_Rx_USRP = Gain_Rx_USRP
+        self.uhd_usrp_source_0.set_gain(self.Gain_Rx_USRP, 0)
+
 
     def get_Fc(self):
         return self.Fc
 
     def set_Fc(self, Fc):
         self.Fc = Fc
+        self.uhd_usrp_source_0.set_center_freq(self.Fc, 0)
+        self.uhd_usrp_sink_0.set_center_freq(self.Fc, 0)
 
     def get_B(self):
         return self.B
@@ -475,8 +520,7 @@ class top_block(gr.top_block, Qt.QWidget):
 
 def main(top_block_cls=top_block, options=None):
 
-    from distutils.version import StrictVersion
-    if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
+    if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
@@ -488,7 +532,7 @@ def main(top_block_cls=top_block, options=None):
     def quitting():
         tb.stop()
         tb.wait()
-    qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
+    qapp.aboutToQuit.connect(quitting)
     qapp.exec_()
 
 
