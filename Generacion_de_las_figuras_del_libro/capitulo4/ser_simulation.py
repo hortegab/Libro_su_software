@@ -5,7 +5,7 @@
 # Title: SER Simulation
 # Author: Homero Ortega Boada
 # Description: Dale un valor a Es/No, corre el flujograma y obten la SER. Puedes sacar tantos valores como para construir una curva de SER
-# Generated: Thu Mar  7 22:03:31 2019
+# Generated: Thu May  9 16:53:13 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -118,7 +118,7 @@ class ser_simulation(gr.top_block, Qt.QWidget):
             (EsN0max-EsN0min)/float(N_snr),
             "Es/N0 [dB]",
             "logPe",
-            "Curva de SER",
+            "Curva de BER",
             4 # Number of inputs
         )
         self.qtgui_vector_sink_f_0.set_update_time(0.10)
@@ -131,7 +131,7 @@ class ser_simulation(gr.top_block, Qt.QWidget):
 
         labels = ["BPSK", "QPSK", '8PSK', "16QAM", '',
                   '', '', '', '', '']
-        widths = [6, 6, 6, 6, 1,
+        widths = [4, 4, 4, 4, 1,
                   1, 1, 1, 1, 1]
         colors = ["blue", "red", "green", "black", "cyan",
                   "magenta", "yellow", "dark red", "dark green", "dark blue"]
@@ -147,7 +147,11 @@ class ser_simulation(gr.top_block, Qt.QWidget):
             self.qtgui_vector_sink_f_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_vector_sink_f_0_win = sip.wrapinstance(self.qtgui_vector_sink_f_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_vector_sink_f_0_win)
+        self.top_grid_layout.addWidget(self._qtgui_vector_sink_f_0_win, 2, 0, 1, 1)
+        for r in range(2, 3):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.digital_constellation_decoder_cb_0_1 = digital.constellation_decoder_cb(MiconstellationObject1)
         self.digital_constellation_decoder_cb_0_0_0 = digital.constellation_decoder_cb(MiconstellationObject0)
         self.digital_constellation_decoder_cb_0_0 = digital.constellation_decoder_cb(MiconstellationObject2)
@@ -190,13 +194,13 @@ class ser_simulation(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_random_source_x, 0), (self.b_BERTool_0_0, 1))
+        self.connect((self.analog_random_source_x, 0), (self.b_BERTool_0_0, 2))
         self.connect((self.analog_random_source_x, 0), (self.digital_chunks_to_symbols_xx, 0))
         self.connect((self.analog_random_source_x_0, 0), (self.b_BERTool_0, 1))
         self.connect((self.analog_random_source_x_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
-        self.connect((self.analog_random_source_x_0_0, 0), (self.b_BERTool_0_1, 1))
+        self.connect((self.analog_random_source_x_0_0, 0), (self.b_BERTool_0_1, 2))
         self.connect((self.analog_random_source_x_0_0, 0), (self.digital_chunks_to_symbols_xx_0_0, 0))
-        self.connect((self.analog_random_source_x_1, 0), (self.b_BERTool_0_0_0, 1))
+        self.connect((self.analog_random_source_x_1, 0), (self.b_BERTool_0_0_0, 2))
         self.connect((self.analog_random_source_x_1, 0), (self.digital_chunks_to_symbols_xx_1, 0))
         self.connect((self.b_BERTool_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.b_BERTool_0, 1), (self.qtgui_vector_sink_f_0, 3))
@@ -211,9 +215,9 @@ class ser_simulation(gr.top_block, Qt.QWidget):
         self.connect((self.digital_chunks_to_symbols_xx_0_0, 0), (self.b_BERTool_0_1, 0))
         self.connect((self.digital_chunks_to_symbols_xx_1, 0), (self.b_BERTool_0_0_0, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.b_BERTool_0, 2))
-        self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.b_BERTool_0_0, 2))
-        self.connect((self.digital_constellation_decoder_cb_0_0_0, 0), (self.b_BERTool_0_0_0, 2))
-        self.connect((self.digital_constellation_decoder_cb_0_1, 0), (self.b_BERTool_0_1, 2))
+        self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.b_BERTool_0_0, 1))
+        self.connect((self.digital_constellation_decoder_cb_0_0_0, 0), (self.b_BERTool_0_0_0, 1))
+        self.connect((self.digital_constellation_decoder_cb_0_1, 0), (self.b_BERTool_0_1, 1))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "ser_simulation")
