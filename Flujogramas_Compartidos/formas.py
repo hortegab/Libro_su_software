@@ -1,6 +1,6 @@
 import math
 import numpy as np
-# Cada una de las siguientes funcion representa una forma para las senales digitales
+# Cada funcion siguinete es una forma de pulso para una senal digital
 # Los parametros comunmente usados son:
 # Sps (Samples per simbol): Duracion de un simbolo en tiempo discreto
 # ntaps: es el numero de muestras a generar por simbolo. Esto debido a que,
