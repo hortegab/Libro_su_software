@@ -5,7 +5,7 @@
 # Title: SER Simulation
 # Author: Homero Ortega Boada
 # Description: Dale un valor a Es/No, corre el flujograma y obten la SER. Puedes sacar tantos valores como para construir una curva de SER
-# Generated: Thu May  9 16:53:13 2019
+# Generated: Thu Aug 22 06:24:14 2019
 ##################################################
 
 if __name__ == '__main__':
@@ -118,7 +118,7 @@ class ser_simulation(gr.top_block, Qt.QWidget):
             (EsN0max-EsN0min)/float(N_snr),
             "Es/N0 [dB]",
             "logPe",
-            "Curva de BER",
+            "Curva de SER",
             4 # Number of inputs
         )
         self.qtgui_vector_sink_f_0.set_update_time(0.10)

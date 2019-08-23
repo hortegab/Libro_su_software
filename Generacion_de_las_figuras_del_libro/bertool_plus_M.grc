@@ -3380,7 +3380,7 @@
     </param>
     <param>
       <key>name</key>
-      <value>"Curva de BER"</value>
+      <value>"Curva de SER"</value>
     </param>
     <param>
       <key>nconnections</key>
