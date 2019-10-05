@@ -315,6 +315,8 @@ class mean_meter(gr.sync_block):
 	self.contador += len(in0)
 	self.acum += np.sum(in0)
 	out0[:] = self.acum/self.contador
+#	out0 = self.acum/self.contador
+#       print("out",out0)
         return len(output_items[0])
 
 </value>
