@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Lo de arriba es para que los IDE conozcan en que esta escrito este codigo 
 ###########################################################
-# Puedes encontrar este codigo como objeto_ej2.py en:    ##
+# Puedes encontrar este codigo como objeto_ej4.py en:    ##
 # https://sites.google.com/saber.uis.edu.co/comdig/sw    ##
 ###########################################################
 ###           IMPORTACION DE LIBRERIAS                  ###
@@ -14,11 +14,12 @@ from gnuradio import gr
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio.filter import firdes
-
 # Librerias para poder incluir graficas tipo QT
 from gnuradio import qtgui
 from PyQt4 import Qt # si no se acepta PyQt4 cambie PyQt4 por PyQt5
 import sys, sip
+import objeto_ej3 as misbloques
+
 
 ###########################################################
 ###           LA CLASE DEL FLUJOGRAMA                   ###
@@ -38,7 +39,9 @@ class flujograma(gr.top_block):
         # Los bloques
         self.src = analog.sig_source_c(samp_rate, analog.GR_SIN_WAVE, 0.1, 1, 0)
         self.nse = analog.noise_source_c(analog.GR_GAUSSIAN, 0.1)
-        self.add = blocks.add_cc()
+#        self.add = blocks.add_cc()
+#        self.add = e_add_cc()
+        self.add = misbloques.e_add_cc()
         self.thr = blocks.throttle(gr.sizeof_gr_complex, samp_rate, True)
         self.snk = qtgui.sink_c(
             fftsize, #fftsize
