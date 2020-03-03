@@ -218,7 +218,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(792, 76)</value>
+      <value>(864, 52)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -230,7 +230,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>numpy.exp(2.j*math.pi*numpy.linspace(0,M-1,M)/M)</value>
+      <value>digital.constellation_qpsk().points()</value>
     </param>
   </block>
   <block>
@@ -443,7 +443,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(712, 76)</value>
+      <value>(568, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1270,7 +1270,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(836, 336)</value>
+      <value>(828, 384)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1293,11 +1293,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1076, 344)</value>
+      <value>(1028, 376)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1347,11 +1347,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1028, 264)</value>
+      <value>(1028, 280)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1374,11 +1374,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1332, 264)</value>
+      <value>(1308, 280)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1401,11 +1401,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1380, 344)</value>
+      <value>(1308, 392)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1428,11 +1428,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1724, 480)</value>
+      <value>(1548, 392)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1510,7 +1510,7 @@
     </param>
     <param>
       <key>Ch_Phoffset</key>
-      <value>Ajuste_phi</value>
+      <value>math.pi/2.</value>
     </param>
     <param>
       <key>Ch_Toffset</key>
@@ -1526,7 +1526,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>Fluctuacion</key>
@@ -1538,7 +1538,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1444, 264)</value>
+      <value>(1372, 280)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1722,11 +1722,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1296, 452)</value>
+      <value>(1248, 500)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1989,7 +1989,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/uis-e3t/MisGits/comdig_pract_M_PSK/bush-clinton_debate_waffle.wav</value>
+      <value>/home/uis-e3t/MisGits/comdig_su_software_Libro/Flujogramas_Compartidos/bush-clinton_debate_waffle.wav</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2270,11 +2270,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1152, 196)</value>
+      <value>(1104, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2329,11 +2329,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1120, 452)</value>
+      <value>(1072, 500)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2372,7 +2372,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 452)</value>
+      <value>(888, 500)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2446,7 +2446,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2473,7 +2473,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2752,11 +2752,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1128, 324)</value>
+      <value>(1096, 332)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2888,7 +2888,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3235,7 +3235,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3937,7 +3937,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(788, 256)</value>
+      <value>(828, 272)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4114,6 +4114,12 @@
   <connection>
     <source_block_id>digital_diff_encoder_bb_0</source_block_id>
     <sink_block_id>digital_chunks_to_symbols_xx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_diff_encoder_bb_0</source_block_id>
+    <sink_block_id>digital_diff_decoder_bb_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

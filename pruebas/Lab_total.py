@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Lab Total
-# Generated: Tue Mar  3 18:25:50 2020
+# Generated: Thu Feb 27 18:34:00 2020
 ##################################################
 
 if __name__ == '__main__':
@@ -16,14 +16,7 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
 
-import os
-import sys
-sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
-
 from PyQt4 import Qt
-from b_Canal_simple_cc import b_Canal_simple_cc  # grc-generated hier_block
-from b_quantizer_fb import b_quantizer_fb  # grc-generated hier_block
-from gnuradio import audio
 from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import eng_notation
@@ -34,11 +27,11 @@ from gnuradio.filter import firdes
 from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
 import cmath
-import coding  # embedded python module
 import math
 import numpy
 import random
 import sip
+import sys
 from gnuradio import qtgui
 
 
@@ -72,10 +65,7 @@ class Lab_total(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-
-        self.MiconstellationObject = MiconstellationObject = digital.constellation_calcdist((digital.constellation_8psk().points()), (), 4, 1).base()
-
-        self.Constelacion = Constelacion = MiconstellationObject.points()
+        self.Constelacion = Constelacion = digital.constellation_8psk().points()
         self.samp_rate_audio = samp_rate_audio = 11000
         self.NbpS = NbpS = 8
         self.M = M = len(Constelacion)
@@ -92,21 +82,24 @@ class Lab_total(gr.top_block, Qt.QWidget):
         self.m = m = math.floor(math.log(Ki_d,2))
         self.Ki = Ki = math.pow(2,m)
         self.Kd = Kd = math.pow(2,m1)
+        self.variable_constellation_rect_0 = variable_constellation_rect_0 = digital.constellation_rect(([-1-1j, -1+1j, 1+1j, 1-1j]), ([0, 1, 3, 2]), 4, 2, 2, 1, 1).base()
         self.samp_rate_tx = samp_rate_tx = int(samp_rate_usrp_tx/Ki)
         self.samp_rate = samp_rate = int(samp_rate_usrp_rx/Kd)
         self.run_stop = run_stop = True
-        self.mapinverse = mapinverse = coding.inverse_map(Constelacion)
-        self.mapdirect = mapdirect = coding.direct_map(Constelacion)
+        self.gray_code = gray_code = digital.utils.gray_code.gray_code(M)
         self.Vp = Vp = 1.
         self.Tmax_scope = Tmax_scope = 16./Rs
         self.SymbTune = SymbTune = 0
         self.Path_Loss_dB = Path_Loss_dB = 0.
         self.NodB = NodB = -60.
         self.NnivelesQ = NnivelesQ = math.pow(2,NbpS)
+
+        self.MiconstellationObject = MiconstellationObject = digital.constellation_calcdist((Constelacion), (), 4, 1).base()
+
         self.Fc = Fc = 80e6
         self.F_offset = F_offset = 0
         self.Ch_Fluct_percent = Ch_Fluct_percent = 10.
-        self.Ajuste_phi = Ajuste_phi = 0.
+        self.Ajuste_phi = Ajuste_phi = 3*math.pi/4
 
         ##################################################
         # Blocks
@@ -122,6 +115,11 @@ class Lab_total(gr.top_block, Qt.QWidget):
         self.controls_grid_layout_1 = Qt.QGridLayout()
         self.controls_layout_1.addLayout(self.controls_grid_layout_1)
         self.controls.addTab(self.controls_widget_1, 'Sintonizar parametros de otros bloques')
+        self.controls_widget_2 = Qt.QWidget()
+        self.controls_layout_2 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.controls_widget_2)
+        self.controls_grid_layout_2 = Qt.QGridLayout()
+        self.controls_layout_2.addLayout(self.controls_grid_layout_2)
+        self.controls.addTab(self.controls_widget_2, 'tiempo')
         self.top_grid_layout.addWidget(self.controls, 1, 0, 1, 2)
         for r in range(1, 2):
             self.top_grid_layout.setRowStretch(r, 1)
@@ -143,6 +141,72 @@ class Lab_total(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 1):
             self.top_grid_layout.setColumnStretch(c, 1)
+        _run_stop_check_box = Qt.QCheckBox('Inicial/Parar')
+        self._run_stop_choices = {True: True, False: False}
+        self._run_stop_choices_inv = dict((v,k) for k,v in self._run_stop_choices.iteritems())
+        self._run_stop_callback = lambda i: Qt.QMetaObject.invokeMethod(_run_stop_check_box, "setChecked", Qt.Q_ARG("bool", self._run_stop_choices_inv[i]))
+        self._run_stop_callback(self.run_stop)
+        _run_stop_check_box.stateChanged.connect(lambda i: self.set_run_stop(self._run_stop_choices[bool(i)]))
+        self.top_grid_layout.addWidget(_run_stop_check_box, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
+        	8, #size
+        	"", #name
+        	1 #number of inputs
+        )
+        self.qtgui_const_sink_x_0.set_update_time(0.10)
+        self.qtgui_const_sink_x_0.set_y_axis(-2, 2)
+        self.qtgui_const_sink_x_0.set_x_axis(-2, 2)
+        self.qtgui_const_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
+        self.qtgui_const_sink_x_0.enable_autoscale(False)
+        self.qtgui_const_sink_x_0.enable_grid(False)
+        self.qtgui_const_sink_x_0.enable_axis_labels(True)
+
+        if not True:
+          self.qtgui_const_sink_x_0.disable_legend()
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "red", "red", "red",
+                  "red", "red", "red", "red", "red"]
+        styles = [0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0]
+        markers = [0, 0, 0, 0, 0,
+                   0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_const_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_const_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_const_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_const_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_const_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_const_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.canal_grid_layout_0.addWidget(self._qtgui_const_sink_x_0_win, 1, 0, 1, 1)
+        for r in range(1, 2):
+            self.canal_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.canal_grid_layout_0.setColumnStretch(c, 1)
+        self.digital_constellation_modulator_0 = digital.generic_mod(
+          constellation=Constelacion,
+          differential=False,
+          samples_per_symbol=Sps,
+          pre_diff_code=True,
+          excess_bw=0.35,
+          verbose=False,
+          log=False,
+          )
+        self.analog_random_source_x_0 = blocks.vector_source_b(map(int, numpy.random.randint(0, 256, 200)), True)
         self._SymbTune_range = Range(0, 1000, 1, 0, 200)
         self._SymbTune_win = RangeWidget(self._SymbTune_range, self.set_SymbTune, 'SymbTunning', "counter", int)
         self.controls_grid_layout_1.addWidget(self._SymbTune_win, 0, 0, 1, 1)
@@ -171,184 +235,33 @@ class Lab_total(gr.top_block, Qt.QWidget):
             self.controls_grid_layout_0.setRowStretch(r, 1)
         for c in range(1, 2):
             self.controls_grid_layout_0.setColumnStretch(c, 1)
-        self._Ajuste_phi_range = Range(-2.*math.pi, 2.*math.pi, 4*math.pi/200., 0., 200)
+        self._Ajuste_phi_range = Range(-2.*math.pi, 2.*math.pi, 4*math.pi/200., 3*math.pi/4, 200)
         self._Ajuste_phi_win = RangeWidget(self._Ajuste_phi_range, self.set_Ajuste_phi, 'Ch_Desajuste_phi (Rad)', "counter", float)
         self.controls_grid_layout_0.addWidget(self._Ajuste_phi_win, 0, 2, 1, 1)
         for r in range(0, 1):
             self.controls_grid_layout_0.setRowStretch(r, 1)
         for c in range(2, 3):
             self.controls_grid_layout_0.setColumnStretch(c, 1)
-        _run_stop_check_box = Qt.QCheckBox('Inicial/Parar')
-        self._run_stop_choices = {True: True, False: False}
-        self._run_stop_choices_inv = dict((v,k) for k,v in self._run_stop_choices.iteritems())
-        self._run_stop_callback = lambda i: Qt.QMetaObject.invokeMethod(_run_stop_check_box, "setChecked", Qt.Q_ARG("bool", self._run_stop_choices_inv[i]))
-        self._run_stop_callback(self.run_stop)
-        _run_stop_check_box.stateChanged.connect(lambda i: self.set_run_stop(self._run_stop_choices[bool(i)]))
-        self.top_grid_layout.addWidget(_run_stop_check_box, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.qtgui_const_sink_x_0_2_0_0 = qtgui.const_sink_c(
-        	1024, #size
-        	'', #name
-        	1 #number of inputs
-        )
-        self.qtgui_const_sink_x_0_2_0_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0_2_0_0.set_y_axis(-1.5, 1.5)
-        self.qtgui_const_sink_x_0_2_0_0.set_x_axis(-2.0, 2.0)
-        self.qtgui_const_sink_x_0_2_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0_2_0_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0_2_0_0.enable_grid(False)
-        self.qtgui_const_sink_x_0_2_0_0.enable_axis_labels(True)
-
-        if not True:
-          self.qtgui_const_sink_x_0_2_0_0.disable_legend()
-
-        labels = ["Salida del canal                                                                         ", 'Tx.Modulador-salida', "Salida del canal", '', '',
-                  '', '', '', '', '']
-        widths = [1, 6, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["green", "red", "magenta", "red", "red",
-                  "red", "red", "red", "red", "red"]
-        styles = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        markers = [0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0_2_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_const_sink_x_0_2_0_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0_2_0_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0_2_0_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0_2_0_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0_2_0_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0_2_0_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_const_sink_x_0_2_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_2_0_0.pyqwidget(), Qt.QWidget)
-        self.canal_grid_layout_0.addWidget(self._qtgui_const_sink_x_0_2_0_0_win, 1, 0, 1, 1)
-        for r in range(1, 2):
-            self.canal_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.canal_grid_layout_0.setColumnStretch(c, 1)
-        self.qtgui_const_sink_x_0_2_0 = qtgui.const_sink_c(
-        	1024, #size
-        	'', #name
-        	1 #number of inputs
-        )
-        self.qtgui_const_sink_x_0_2_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0_2_0.set_y_axis(-1.5, 1.5)
-        self.qtgui_const_sink_x_0_2_0.set_x_axis(-2.0, 2.0)
-        self.qtgui_const_sink_x_0_2_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0_2_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0_2_0.enable_grid(False)
-        self.qtgui_const_sink_x_0_2_0.enable_axis_labels(True)
-
-        if not True:
-          self.qtgui_const_sink_x_0_2_0.disable_legend()
-
-        labels = ["Tx.Modulador-salida                                                             ", 'Tx.Modulador-salida', "Salida del canal", '', '',
-                  '', '', '', '', '']
-        widths = [4, 6, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["red", "red", "magenta", "red", "red",
-                  "red", "red", "red", "red", "red"]
-        styles = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        markers = [0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0_2_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_const_sink_x_0_2_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0_2_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0_2_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0_2_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0_2_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0_2_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_const_sink_x_0_2_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_2_0.pyqwidget(), Qt.QWidget)
-        self.canal_grid_layout_0.addWidget(self._qtgui_const_sink_x_0_2_0_win, 2, 0, 1, 1)
-        for r in range(2, 3):
-            self.canal_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.canal_grid_layout_0.setColumnStretch(c, 1)
-        self.digital_map_bb_0_0 = digital.map_bb((mapinverse))
-        self.digital_map_bb_0 = digital.map_bb((mapdirect))
-        self.digital_diff_encoder_bb_0 = digital.diff_encoder_bb(M)
-        self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(M)
-        self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(MiconstellationObject)
-        self.digital_chunks_to_symbols_xx_0 = digital.chunks_to_symbols_bc((Constelacion), 1)
-        self.blocks_wavfile_source_0 = blocks.wavfile_source('/home/uis-e3t/MisGits/comdig_pract_M_PSK/bush-clinton_debate_waffle.wav', True)
-        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(Bps, gr.GR_LSB_FIRST)
-        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(Bps, gr.GR_LSB_FIRST)
-        self.blocks_multiply_const_vxx_0_0_0 = blocks.multiply_const_vff((Vp/(NnivelesQ/2), ))
-        self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, SymbTune)
-        self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
-        self.b_quantizer_fb_0 = b_quantizer_fb(
-            NivelesQ=NnivelesQ,
-            Vmax=Vp,
-        )
-        self.b_Canal_simple_cc_0 = b_Canal_simple_cc(
-            Ch_Loss_dB=Path_Loss_dB,
-            Ch_NodB=NodB,
-            Ch_Phoffset=Ajuste_phi,
-            Ch_Toffset=0,
-            Fluctuacion=Ch_Fluct_percent,
-            Foffset=F_offset,
-            T_fluct=M*1024,
-            samp_rate=Rs,
-        )
-        self.audio_sink_0 = audio.sink(samp_rate_audio, '', True)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.b_Canal_simple_cc_0, 0), (self.blocks_delay_0, 0))
-        self.connect((self.b_Canal_simple_cc_0, 0), (self.qtgui_const_sink_x_0_2_0_0, 0))
-        self.connect((self.b_quantizer_fb_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
-        self.connect((self.blocks_char_to_float_0, 0), (self.blocks_multiply_const_vxx_0_0_0, 0))
-        self.connect((self.blocks_delay_0, 0), (self.digital_constellation_decoder_cb_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0_0_0, 0), (self.audio_sink_0, 0))
-        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_diff_encoder_bb_0, 0))
-        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_char_to_float_0, 0))
-        self.connect((self.blocks_wavfile_source_0, 0), (self.b_quantizer_fb_0, 0))
-        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.b_Canal_simple_cc_0, 0))
-        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.qtgui_const_sink_x_0_2_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_map_bb_0_0, 0))
-        self.connect((self.digital_diff_decoder_bb_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
-        self.connect((self.digital_diff_encoder_bb_0, 0), (self.digital_map_bb_0, 0))
-        self.connect((self.digital_map_bb_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
-        self.connect((self.digital_map_bb_0_0, 0), (self.digital_diff_decoder_bb_0, 0))
+        self.connect((self.analog_random_source_x_0, 0), (self.digital_constellation_modulator_0, 0))
+        self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_const_sink_x_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "Lab_total")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
-    def get_MiconstellationObject(self):
-        return self.MiconstellationObject
-
-    def set_MiconstellationObject(self, MiconstellationObject):
-        self.MiconstellationObject = MiconstellationObject
-
     def get_Constelacion(self):
         return self.Constelacion
 
     def set_Constelacion(self, Constelacion):
         self.Constelacion = Constelacion
-        self.set_mapinverse(coding.inverse_map(self.Constelacion))
-        self.set_mapdirect(coding.direct_map(self.Constelacion))
         self.set_M(len(self.Constelacion))
-        self.digital_chunks_to_symbols_xx_0.set_symbol_table((self.Constelacion))
 
     def get_samp_rate_audio(self):
         return self.samp_rate_audio
@@ -362,16 +275,16 @@ class Lab_total(gr.top_block, Qt.QWidget):
 
     def set_NbpS(self, NbpS):
         self.NbpS = NbpS
-        self.set_NnivelesQ(math.pow(2,self.NbpS))
         self.set_Rb(self.NbpS*self.samp_rate_audio)
+        self.set_NnivelesQ(math.pow(2,self.NbpS))
 
     def get_M(self):
         return self.M
 
     def set_M(self, M):
         self.M = M
+        self.set_gray_code(digital.utils.gray_code.gray_code(self.M))
         self.set_Bps(int(math.log(self.M,2)))
-        self.b_Canal_simple_cc_0.set_T_fluct(self.M*1024)
 
     def get_Rb(self):
         return self.Rb
@@ -400,7 +313,6 @@ class Lab_total(gr.top_block, Qt.QWidget):
     def set_Rs(self, Rs):
         self.Rs = Rs
         self.set_samp_rate_d(self.Rs*self.Sps)
-        self.b_Canal_simple_cc_0.set_samp_rate(self.Rs)
         self.set_Tmax_scope(16./self.Rs)
 
     def get_samp_rate_usrp_tx(self):
@@ -469,6 +381,12 @@ class Lab_total(gr.top_block, Qt.QWidget):
         self.Kd = Kd
         self.set_samp_rate(int(self.samp_rate_usrp_rx/self.Kd))
 
+    def get_variable_constellation_rect_0(self):
+        return self.variable_constellation_rect_0
+
+    def set_variable_constellation_rect_0(self, variable_constellation_rect_0):
+        self.variable_constellation_rect_0 = variable_constellation_rect_0
+
     def get_samp_rate_tx(self):
         return self.samp_rate_tx
 
@@ -490,25 +408,17 @@ class Lab_total(gr.top_block, Qt.QWidget):
         if self.run_stop: self.start()
         else: self.stop(); self.wait()
 
-    def get_mapinverse(self):
-        return self.mapinverse
+    def get_gray_code(self):
+        return self.gray_code
 
-    def set_mapinverse(self, mapinverse):
-        self.mapinverse = mapinverse
-
-    def get_mapdirect(self):
-        return self.mapdirect
-
-    def set_mapdirect(self, mapdirect):
-        self.mapdirect = mapdirect
+    def set_gray_code(self, gray_code):
+        self.gray_code = gray_code
 
     def get_Vp(self):
         return self.Vp
 
     def set_Vp(self, Vp):
         self.Vp = Vp
-        self.blocks_multiply_const_vxx_0_0_0.set_k((self.Vp/(self.NnivelesQ/2), ))
-        self.b_quantizer_fb_0.set_Vmax(self.Vp)
 
     def get_Tmax_scope(self):
         return self.Tmax_scope
@@ -521,29 +431,30 @@ class Lab_total(gr.top_block, Qt.QWidget):
 
     def set_SymbTune(self, SymbTune):
         self.SymbTune = SymbTune
-        self.blocks_delay_0.set_dly(self.SymbTune)
 
     def get_Path_Loss_dB(self):
         return self.Path_Loss_dB
 
     def set_Path_Loss_dB(self, Path_Loss_dB):
         self.Path_Loss_dB = Path_Loss_dB
-        self.b_Canal_simple_cc_0.set_Ch_Loss_dB(self.Path_Loss_dB)
 
     def get_NodB(self):
         return self.NodB
 
     def set_NodB(self, NodB):
         self.NodB = NodB
-        self.b_Canal_simple_cc_0.set_Ch_NodB(self.NodB)
 
     def get_NnivelesQ(self):
         return self.NnivelesQ
 
     def set_NnivelesQ(self, NnivelesQ):
         self.NnivelesQ = NnivelesQ
-        self.blocks_multiply_const_vxx_0_0_0.set_k((self.Vp/(self.NnivelesQ/2), ))
-        self.b_quantizer_fb_0.set_NivelesQ(self.NnivelesQ)
+
+    def get_MiconstellationObject(self):
+        return self.MiconstellationObject
+
+    def set_MiconstellationObject(self, MiconstellationObject):
+        self.MiconstellationObject = MiconstellationObject
 
     def get_Fc(self):
         return self.Fc
@@ -556,21 +467,18 @@ class Lab_total(gr.top_block, Qt.QWidget):
 
     def set_F_offset(self, F_offset):
         self.F_offset = F_offset
-        self.b_Canal_simple_cc_0.set_Foffset(self.F_offset)
 
     def get_Ch_Fluct_percent(self):
         return self.Ch_Fluct_percent
 
     def set_Ch_Fluct_percent(self, Ch_Fluct_percent):
         self.Ch_Fluct_percent = Ch_Fluct_percent
-        self.b_Canal_simple_cc_0.set_Fluctuacion(self.Ch_Fluct_percent)
 
     def get_Ajuste_phi(self):
         return self.Ajuste_phi
 
     def set_Ajuste_phi(self, Ajuste_phi):
         self.Ajuste_phi = Ajuste_phi
-        self.b_Canal_simple_cc_0.set_Ch_Phoffset(self.Ajuste_phi)
 
 
 def main(top_block_cls=Lab_total, options=None):

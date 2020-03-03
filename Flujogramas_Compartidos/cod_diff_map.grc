@@ -218,7 +218,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(792, 76)</value>
+      <value>(784, 564)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -230,7 +230,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>numpy.exp(2.j*math.pi*numpy.linspace(0,M-1,M)/M)</value>
+      <value>MiconstellationObject.points()</value>
     </param>
   </block>
   <block>
@@ -443,7 +443,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(712, 76)</value>
+      <value>(568, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -455,7 +455,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>8</value>
+      <value>len(Constelacion)</value>
     </param>
   </block>
   <block>
@@ -466,7 +466,7 @@
     </param>
     <param>
       <key>const_points</key>
-      <value>Constelacion</value>
+      <value>digital.constellation_8psk().points()</value>
     </param>
     <param>
       <key>type</key>
@@ -942,6 +942,60 @@
     </param>
   </block>
   <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1328, 564)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>mapdirect</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>coding.direct_map(Constelacion)</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1480, 564)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>mapinverse</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>coding.inverse_map(Constelacion)</value>
+    </param>
+  </block>
+  <block>
     <key>variable_qtgui_check_box</key>
     <param>
       <key>comment</key>
@@ -1270,7 +1324,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(836, 336)</value>
+      <value>(788, 376)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1279,6 +1333,33 @@
     <param>
       <key>id</key>
       <value>Tx_1_0_0_1_0</value>
+    </param>
+    <param>
+      <key>stream_id</key>
+      <value>R4</value>
+    </param>
+  </block>
+  <block>
+    <key>virtual_sink</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(996, 376)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>90</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>Tx_1_0_0_1_0_0</value>
     </param>
     <param>
       <key>stream_id</key>
@@ -1297,7 +1378,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1076, 344)</value>
+      <value>(1196, 384)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1305,7 +1386,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>Tx_1_0_0_1_0_0</value>
+      <value>Tx_1_0_0_1_0_0_0</value>
     </param>
     <param>
       <key>stream_id</key>
@@ -1336,6 +1417,33 @@
     </param>
     <param>
       <key>stream_id</key>
+      <value>T4</value>
+    </param>
+  </block>
+  <block>
+    <key>virtual_sink</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(996, 264)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>270</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>Tx_1_0_0_2_0</value>
+    </param>
+    <param>
+      <key>stream_id</key>
       <value>T3</value>
     </param>
   </block>
@@ -1351,7 +1459,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1028, 264)</value>
+      <value>(1196, 264)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1359,7 +1467,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>Tx_1_0_0_2_0</value>
+      <value>Tx_1_0_0_2_0_0</value>
     </param>
     <param>
       <key>stream_id</key>
@@ -1378,7 +1486,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1332, 264)</value>
+      <value>(1484, 264)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1405,7 +1513,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1380, 344)</value>
+      <value>(1484, 384)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1432,7 +1540,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1724, 480)</value>
+      <value>(1788, 456)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1538,7 +1646,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1444, 264)</value>
+      <value>(1540, 304)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1726,7 +1834,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1296, 452)</value>
+      <value>(1416, 492)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2136,6 +2244,92 @@
     </param>
   </block>
   <block>
+    <key>epy_module</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>source_code</key>
+      <value># this module will be imported in the into your flowgraph
+import numpy
+import math
+#######################################################
+##        Done by Homero Ortega Boada              ##
+##        comdiguis@saber.uis.edu.co                 ##
+##     Universidad Industrial de Santander           ##
+#######################################################
+#######################################################
+##       Constellation map  identification           ##
+#######################################################                  
+# Constellation points are analyzed to determine the 
+# the map used for ordering of the constellation points
+def sum_modulus(a,b,modulus):
+    # realiza una suma de a y b en modulo modulus
+    return (a+b)%modulus
+
+def angle_map(constellation_points):
+    # esta funcion entrega todos los angulos positivos entre 0 y 2pi
+    angles=numpy.angle(constellation_points)
+    return sum_modulus(angles, 2*math.pi, 2*math.pi)
+
+def inverse_map(constellation_points):
+    M=len(constellation_points)
+    angles=angle_map(constellation_points)
+    angles=sum_modulus(angles,-angles[0], 2*math.pi) # giro a agulo cero
+    delta_angle= 2*math.pi/M     # angulo entre puntos
+    cod_inv=numpy.round(angles/delta_angle)
+    cod_inv=cod_inv.astype(numpy.int) #conversion a entero 
+    return cod_inv
+
+def direct_map(constellation_points):
+    M=len(constellation_points)
+    codinv=inverse_map(constellation_points)
+    coddirect=numpy.array([0]*M)
+    for j in range(M):
+        temp=numpy.where(codinv==j)
+        coddirect[j]=temp[0][0]
+    return coddirect
+
+""" # SECCION DE PRUEBAS DEL CODIGO
+import gnuradio.digital as digital
+constelacion=digital.constellation_8psk().points()
+print("constelacion = ", constelacion)
+mapdirect=direct_map(constelacion)
+print("codigo directo = ", mapdirect)
+mapinverse=inverse_map(constelacion)
+print("codigo inverso = ", mapinverse)
+"""
+
+
+
+
+
+
+</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1216, 564)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>coding</value>
+    </param>
+  </block>
+  <block>
     <key>qtgui_tab_widget</key>
     <param>
       <key>alias</key>
@@ -2274,7 +2468,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1152, 196)</value>
+      <value>(1256, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2333,7 +2527,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1120, 452)</value>
+      <value>(1240, 492)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2372,7 +2566,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 452)</value>
+      <value>(832, 492)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2415,7 +2609,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 204)</value>
+      <value>(848, 204)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2436,6 +2630,92 @@
     <param>
       <key>modulus</key>
       <value>M</value>
+    </param>
+  </block>
+  <block>
+    <key>digital_map_bb</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1056, 204)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>digital_map_bb_0</value>
+    </param>
+    <param>
+      <key>map</key>
+      <value>mapdirect</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>digital_map_bb</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1048, 492)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>digital_map_bb_0_0</value>
+    </param>
+    <param>
+      <key>map</key>
+      <value>mapinverse</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -2725,7 +3005,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 332)</value>
+      <value>(848, 332)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2737,7 +3017,7 @@
     </param>
     <param>
       <key>note</key>
-      <value>CAPA2 COD DIF</value>
+      <value>CAPA3 COD DIF</value>
     </param>
   </block>
   <block>
@@ -2756,7 +3036,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1128, 324)</value>
+      <value>(1248, 324)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2769,6 +3049,37 @@
     <param>
       <key>note</key>
       <value>CAPA1 MODULACION EC</value>
+    </param>
+  </block>
+  <block>
+    <key>note</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1064, 324)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>note_0_0_0_0_1</value>
+    </param>
+    <param>
+      <key>note</key>
+      <value>CAPA2 MAP</value>
     </param>
   </block>
   <block>
@@ -3949,7 +4260,7 @@
     </param>
     <param>
       <key>stream_id</key>
-      <value>T3</value>
+      <value>T4</value>
     </param>
   </block>
   <block>
@@ -3976,7 +4287,7 @@
     </param>
     <param>
       <key>stream_id</key>
-      <value>R3</value>
+      <value>R4</value>
     </param>
   </block>
   <connection>
@@ -4089,13 +4400,13 @@
   </connection>
   <connection>
     <source_block_id>digital_constellation_decoder_cb_0</source_block_id>
-    <sink_block_id>Tx_1_0_0_1_0_0</sink_block_id>
+    <sink_block_id>Tx_1_0_0_1_0_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>digital_constellation_decoder_cb_0</source_block_id>
-    <sink_block_id>digital_diff_decoder_bb_0</sink_block_id>
+    <sink_block_id>digital_map_bb_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -4113,7 +4424,31 @@
   </connection>
   <connection>
     <source_block_id>digital_diff_encoder_bb_0</source_block_id>
+    <sink_block_id>digital_map_bb_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_map_bb_0</source_block_id>
+    <sink_block_id>Tx_1_0_0_2_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_map_bb_0</source_block_id>
     <sink_block_id>digital_chunks_to_symbols_xx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_map_bb_0_0</source_block_id>
+    <sink_block_id>Tx_1_0_0_1_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_map_bb_0_0</source_block_id>
+    <sink_block_id>digital_diff_decoder_bb_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
